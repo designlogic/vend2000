@@ -1,4 +1,5 @@
 ﻿using System;
+using Vend2000.Interfaces;
 
 namespace Vend2000
 {

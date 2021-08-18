@@ -1,7 +1,7 @@
 ﻿
 using Vend2000.World.Items;
 
-namespace Vend2000
+namespace Vend2000.Interfaces
 {
     public interface IGumDispenser
     {

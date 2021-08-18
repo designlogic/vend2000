@@ -1,4 +1,5 @@
-﻿using Vend2000.World;
+﻿using Vend2000.Interfaces;
+using Vend2000.World;
 using Vend2000.World.Coins;
 using Vend2000.World.Items;
 

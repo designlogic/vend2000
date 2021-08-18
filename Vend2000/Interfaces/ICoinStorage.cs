@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using Vend2000.World.Coins;
 
-namespace Vend2000
+namespace Vend2000.Interfaces
 {
     public interface ICoinStorage
     {
