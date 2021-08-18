@@ -1,4 +1,4 @@
-﻿namespace Vend2000
+﻿namespace Vend2000.World.Coins
 {
     public enum CoinType
     {

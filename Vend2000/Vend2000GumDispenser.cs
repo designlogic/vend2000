@@ -1,15 +1,16 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Threading.Tasks;
+using Vend2000.World.Coins;
+using Vend2000.World.Items;
 
 namespace Vend2000
 {
-    public class Vend2000
+    public class Vend2000GumDispenser
     {
-        private readonly ICoinValidator coinValidator;
-        private readonly IGumDispenser gumDispenser;
-        private readonly ICoinStorage coinStorage;
+        private readonly ICoinValidator? coinValidator;
+        private readonly IGumDispenser? gumDispenser;
+        private readonly ICoinStorage? coinStorage;
 
         private string message = " ";
 
@@ -23,7 +24,7 @@ namespace Vend2000
 
         private const string EscapeKeyCode = "\u001b";
 
-        public Vend2000(ICoinValidator coinValidator, IGumDispenser gumDispenser, ICoinStorage coinStorage)
+        public Vend2000GumDispenser(ICoinValidator? coinValidator, IGumDispenser? gumDispenser, ICoinStorage? coinStorage)
         {
             this.coinValidator = coinValidator;
             this.gumDispenser = gumDispenser;
@@ -37,7 +38,9 @@ namespace Vend2000
                 ClearScreen();
                 Log(logo);
 
-                var moduleIsMissing = CheckForMissingModules();
+                LoadModules();
+
+                var moduleIsMissing = (coinValidator == null || gumDispenser == null || coinStorage == null);
                 if (moduleIsMissing)
                 {
                     LineFeed();
@@ -85,7 +88,7 @@ namespace Vend2000
                     continue;
                 }
 
-                var coinType = coinValidator.DetermineCoinType(coin);
+                var coinType = coinValidator?.DetermineCoinType(coin);
                 var coinIsInvalid = coinType != CoinType.Bronze;
                 if (coinIsInvalid)
                 {
@@ -95,7 +98,7 @@ namespace Vend2000
                     continue;
                 }
 
-                var gumPacket = gumDispenser.Dispense();
+                var gumPacket = gumDispenser?.Dispense();
                 if (gumPacket is null)
                 {
                     LineFeed();
@@ -104,7 +107,7 @@ namespace Vend2000
                     continue;
                 }
 
-                coinStorage.Add(coin);
+                coinStorage?.Add(coin);
                 DispenseGum(gumPacket);
             }
         }
@@ -165,8 +168,8 @@ namespace Vend2000
                 Heading("Maintenance Mode");
                 LineFeed();
 
-                Log($"Gum packets {gumDispenser.Quantity} of {gumDispenser.Capacity}");
-                Log($"Coin count {coinStorage.CoinCount}");
+                Log($"Gum packets {gumDispenser?.Quantity} of {gumDispenser?.Capacity}");
+                Log($"Coin count {coinStorage?.CoinCount}");
                 Separator();
                 LineFeed();
 
@@ -186,13 +189,13 @@ namespace Vend2000
                 switch (input)
                 {
                     case 1:
-                        gumDispenser.Add(new GumPacket());
+                        gumDispenser?.Add(new GumPacket());
                         break;
                     case 2:
-                        gumDispenser.Dispense();
+                        gumDispenser?.Dispense();
                         break;
                     case 3:
-                        coinStorage.Empty();
+                        coinStorage?.Empty();
                         break;
                 }
             }
@@ -253,14 +256,8 @@ namespace Vend2000
             return null;
         }
 
-        private bool CheckForMissingModules()
+        private void LoadModules()
         {
-            var modulesAreMissing = coinValidator == null || gumDispenser == null || coinStorage == null;
-            if (!modulesAreMissing)
-            {
-                return false;
-            }
-            
             Log($"Verifying Module Installation... ");
             LineFeed();
 
@@ -271,8 +268,7 @@ namespace Vend2000
             Log($"Coin Validator module : {coinValidatorMessage}");
             Log($"Gum Dispenser module  : {gumDispenserMessage}");
             Log($"Coin Storage module   : {coinStorageMessage}");
-
-            return true;
+            
         }
 
         #region Helpers
