@@ -9,11 +9,11 @@ namespace Vend2000
         {
             Console.CursorVisible = false;
 
-            ICoinValidator coinValidator = null;
+            ICoinIdentifier coinIdentifier = null;
             IGumDispenser gumDispenser = null;
             ICoinStorage coinStorage = null;
 
-            var vend2000 = new Vend2000GumDispenser(coinValidator, gumDispenser, coinStorage);
+            var vend2000 = new Vend2000GumDispenser(coinIdentifier, gumDispenser, coinStorage);
             vend2000.Run();
 
             Console.CursorVisible = true;

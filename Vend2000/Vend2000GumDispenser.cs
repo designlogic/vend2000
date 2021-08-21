@@ -7,13 +7,13 @@ namespace Vend2000
 {
     public class Vend2000GumDispenser : Vend2000Base
     {
-        private readonly ICoinValidator? coinValidator;
+        private readonly ICoinIdentifier? coinIdentifier;
         private readonly IGumDispenser? gumDispenser;
         private readonly ICoinStorage? coinStorage;
 
-        public Vend2000GumDispenser(ICoinValidator? coinValidator, IGumDispenser? gumDispenser, ICoinStorage? coinStorage)
+        public Vend2000GumDispenser(ICoinIdentifier? coinIdentifier, IGumDispenser? gumDispenser, ICoinStorage? coinStorage)
         {
-            this.coinValidator = coinValidator;
+            this.coinIdentifier = coinIdentifier;
             this.gumDispenser = gumDispenser;
             this.coinStorage = coinStorage;
         }   
@@ -27,7 +27,7 @@ namespace Vend2000
 
                 LoadModules();
 
-                var moduleIsMissing = (coinValidator == null || gumDispenser == null || coinStorage == null);
+                var moduleIsMissing = (coinIdentifier == null || gumDispenser == null || coinStorage == null);
                 if (moduleIsMissing)
                 {
                     LineFeed();
@@ -75,7 +75,7 @@ namespace Vend2000
                     continue;
                 }
 
-                var coinType = coinValidator?.DetermineCoinType(coin);
+                var coinType = coinIdentifier?.IdentifyCoinType(coin);
                 var coinIsInvalid = coinType != CoinType.Bronze;
                 if (coinIsInvalid)
                 {
@@ -191,11 +191,11 @@ namespace Vend2000
             Log($"Verifying Module Installation... ");
             LineFeed();
 
-            var coinValidatorMessage = coinValidator is null ? "*** Not installed *** (Program.cs Line 11)" : "Installed";
+            var coinIdentifierMessage = coinIdentifier is null ? "*** Not installed *** (Program.cs Line 11)" : "Installed";
             var gumDispenserMessage = gumDispenser is null ? "*** Not installed *** (Program.cs Line 12)" : "Installed";
             var coinStorageMessage = coinStorage is null ? "*** Not installed *** (Program.cs Line 13)" : "Installed";
             
-            Log($"Coin Validator module : {coinValidatorMessage}");
+            Log($"Coin Identifier module : {coinIdentifierMessage}");
             Log($"Gum Dispenser module  : {gumDispenserMessage}");
             Log($"Coin Storage module   : {coinStorageMessage}");
         }

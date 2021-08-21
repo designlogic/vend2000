@@ -10,4 +10,6 @@ namespace Vend2000.Interfaces
         int CoinCount { get; }
         int Capacity { get; }
     }
+
+    //This is abstract test
 }
