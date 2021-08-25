@@ -10,4 +10,9 @@
     <Compile Remove="Dev.cs" />
   </ItemGroup>
 
+  <ItemGroup>
+    <None Remove=".gitignore" />
+    <None Remove="README.md" />
+  </ItemGroup>
+
 </Project>

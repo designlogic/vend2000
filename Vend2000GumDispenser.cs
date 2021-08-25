@@ -191,9 +191,9 @@ namespace Vend2000
             Log($"Verifying Module Installation... ");
             LineFeed();
 
-            var coinIdentifierMessage = coinIdentifier is null ? "*** Not installed *** (Program.cs Line 11)" : "Installed";
-            var gumDispenserMessage = gumDispenser is null ? "*** Not installed *** (Program.cs Line 12)" : "Installed";
-            var coinStorageMessage = coinStorage is null ? "*** Not installed *** (Program.cs Line 13)" : "Installed";
+            var coinIdentifierMessage = coinIdentifier is null ? "*** Not installed *** (Program.cs Line 12)" : "Installed";
+            var gumDispenserMessage = gumDispenser is null ? "*** Not installed *** (Program.cs Line 13)" : "Installed";
+            var coinStorageMessage = coinStorage is null ? "*** Not installed *** (Program.cs Line 14)" : "Installed";
             
             Log($"Coin Identifier module : {coinIdentifierMessage}");
             Log($"Gum Dispenser module  : {gumDispenserMessage}");
