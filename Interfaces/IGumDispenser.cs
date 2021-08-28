@@ -1,5 +1,4 @@
-﻿
-using Vend2000.World.Items;
+﻿using Vend2000.World.Items;
 
 namespace Vend2000.Interfaces
 {
