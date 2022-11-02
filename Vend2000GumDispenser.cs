@@ -1,4 +1,5 @@
 ﻿using Vend2000.Interfaces;
+using Vend2000.Modules;
 using Vend2000.World;
 using Vend2000.World.Coins;
 using Vend2000.World.Items;
@@ -7,17 +8,10 @@ namespace Vend2000
 {
     public class Vend2000GumDispenser : Vend2000Base
     {
-        private readonly ICoinIdentifier? coinIdentifier;
-        private readonly IGumDispenser? gumDispenser;
-        private readonly ICoinStorage? coinStorage;
-
-        public Vend2000GumDispenser(ICoinIdentifier? coinIdentifier, IGumDispenser? gumDispenser, ICoinStorage? coinStorage)
-        {
-            this.coinIdentifier = coinIdentifier;
-            this.gumDispenser = gumDispenser;
-            this.coinStorage = coinStorage;
-        }   
-
+        private readonly ICoinIdentifier coinIdentifier = new CoinIdentifier();
+        private readonly IGumDispenser gumDispenser = new GumDispenser();
+        private readonly ICoinStorage coinStorage = new CoinStorage();
+        
         public void Run()
         {
             while (true)
@@ -25,14 +19,12 @@ namespace Vend2000
                 ClearScreen();
                 Log(logo);
 
-                LoadModules();
-
-                var moduleIsMissing = (coinIdentifier == null || gumDispenser == null || coinStorage == null);
-                if (moduleIsMissing)
+                var moduleMalfunction = !IsSystemTestSuccessful();
+                if (moduleMalfunction)
                 {
                     LineFeed();
                     Separator();
-                    Log("Please install missing modules.");
+                    Log("*** Module malfunction detected ***");
                     Separator();
                     break;
                 }
@@ -165,7 +157,7 @@ namespace Vend2000
                         gumDispenser?.Dispense();
                         break;
                     case 3:
-                        coinStorage?.Empty();
+                        coinStorage?.EmptyCoins();
                         break;
                     case 4:
                         break;
@@ -186,18 +178,55 @@ namespace Vend2000
             };
         }
 
-        private void LoadModules()
+        private bool IsSystemTestSuccessful()
         {
-            Log($"Verifying Module Installation... ");
+            Log($"Checking modules... ");
             LineFeed();
 
-            var coinIdentifierMessage = coinIdentifier is null ? "*** Not installed *** (Program.cs Line 12)" : "Installed";
-            var gumDispenserMessage = gumDispenser is null ? "*** Not installed *** (Program.cs Line 13)" : "Installed";
-            var coinStorageMessage = coinStorage is null ? "*** Not installed *** (Program.cs Line 14)" : "Installed";
-            
-            Log($"Coin Identifier module : {coinIdentifierMessage}");
-            Log($"Gum Dispenser module  : {gumDispenserMessage}");
-            Log($"Coin Storage module   : {coinStorageMessage}");
+            var hasError = false;
+
+            try
+            {
+                var _ = coinIdentifier.IdentifyCoinType(new GoldCoin());
+                Log($"Coin Identifier module: Installed");
+            }
+            catch 
+            {
+                hasError = true;
+                Log($"Coin Identifier module: *** Malfunction ***");
+            }
+
+            try
+            {
+                var capacity = gumDispenser.Capacity;
+                var quantity = gumDispenser.Quantity;
+                gumDispenser.Add(new GumPacket());
+                var _ = gumDispenser.Dispense();
+
+                Log($"Gum Dispenser module: Installed");
+            }
+            catch
+            {
+                hasError = true;
+                Log($"Gum Dispenser module: *** Malfunction ***");
+            }
+
+            try
+            {
+                var capacity = coinStorage.Capacity;
+                var count = coinStorage.CoinCount;
+                coinStorage.Add(new GoldCoin());
+                var _ = coinStorage.EmptyCoins();
+
+                Log($"Coin Storage module: Installed");
+            }
+            catch
+            {
+                hasError = true;
+                Log($"Coin Storage module: *** Malfunction ***");
+            }
+
+            return !hasError;
         }
     }
 }

@@ -5,7 +5,7 @@ namespace Vend2000.Interfaces
 {
     public interface ICoinStorage
     {
-        List<ICoin> Empty();
+        List<ICoin> EmptyCoins();
         void Add(ICoin coin);
         int CoinCount { get; }
         int Capacity { get; }
