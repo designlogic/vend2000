@@ -1,4 +1,5 @@
-﻿using Vend2000.Interfaces;
+﻿using System;
+using Vend2000.Interfaces;
 using Vend2000.Modules;
 using Vend2000.World;
 using Vend2000.World.Coins;
@@ -24,7 +25,7 @@ namespace Vend2000
                 {
                     LineFeed();
                     Separator();
-                    Log("*** Module malfunction detected ***");
+                    LogError("*** Module malfunction detected ***");
                     Separator();
                     break;
                 }
@@ -187,43 +188,66 @@ namespace Vend2000
 
             try
             {
-                var _ = coinIdentifier.IdentifyCoinType(new GoldCoin());
-                Log($"Coin Identifier module: Installed");
+                var goldCoinType = coinIdentifier.IdentifyCoinType(new GoldCoin());
+                var silverCoinType = coinIdentifier.IdentifyCoinType(new SilverCoin());
+                var bronzeCoinType = coinIdentifier.IdentifyCoinType(new BronzeCoin());
+                var otherCoinType = coinIdentifier.IdentifyCoinType(new WoodenCoin());
+
+                var hasPassed = goldCoinType == CoinType.Gold && silverCoinType == CoinType.Silver && bronzeCoinType == CoinType.Bronze && otherCoinType == CoinType.Unknown;
+                if (!hasPassed)
+                {
+                    throw new Exception();
+                }
+
+                LogSuccess($"Coin Identifier module: Passed");
             }
             catch 
             {
                 hasError = true;
-                Log($"Coin Identifier module: *** Malfunction ***");
-            }
-
-            try
-            {
-                var capacity = gumDispenser.Capacity;
-                var quantity = gumDispenser.Quantity;
-                gumDispenser.Add(new GumPacket());
-                var _ = gumDispenser.Dispense();
-
-                Log($"Gum Dispenser module: Installed");
-            }
-            catch
-            {
-                hasError = true;
-                Log($"Gum Dispenser module: *** Malfunction ***");
+                LogError($"Coin Identifier module: *** Malfunction ***");
             }
 
             try
             {
                 var capacity = coinStorage.Capacity;
-                var count = coinStorage.CoinCount;
                 coinStorage.Add(new GoldCoin());
-                var _ = coinStorage.EmptyCoins();
+                var countAfterAdd = coinStorage.CoinCount;
+                var coins = coinStorage.EmptyCoins();
+                var countAfterEmpty = coinStorage.CoinCount;
 
-                Log($"Coin Storage module: Installed");
+                var hasPassed = capacity == 100 && countAfterAdd == 1 && countAfterEmpty == 0 && coins.Count == 1;
+                if (!hasPassed)
+                {
+                    throw new Exception();
+                }
+
+                LogSuccess($"Coin Storage module: Passed");
             }
             catch
             {
                 hasError = true;
-                Log($"Coin Storage module: *** Malfunction ***");
+                LogError($"Coin Storage module: *** Malfunction ***");
+            }
+
+            try
+            {
+                var capacity = gumDispenser.Capacity;
+                gumDispenser.Add(new GumPacket());
+                gumDispenser.Add(new GumPacket());
+                var gumPacket = gumDispenser.Dispense();
+
+                var hasPassed = capacity == 20 && gumDispenser.Quantity == 1 && gumPacket != null;
+                if (!hasPassed)
+                {
+                    throw new Exception();
+                }
+
+                LogSuccess($"Gum Dispenser module: Passed");
+            }
+            catch
+            {
+                hasError = true;
+                LogError($"Gum Dispenser module: *** Malfunction ***");
             }
 
             return !hasError;

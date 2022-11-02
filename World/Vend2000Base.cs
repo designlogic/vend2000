@@ -27,14 +27,19 @@ namespace Vend2000.World
             Separator('=');
         }
 
-        protected void Log(string message = "", bool important = false)
+        protected void LogError(string logMessage) => Log(logMessage, false, ConsoleColor.Red);
+        protected void LogSuccess(string logMessage) => Log(logMessage, false, ConsoleColor.Green);
+
+        protected void Log(string logMessage = "", bool important = false, ConsoleColor foregroundColor = ConsoleColor.White)
         {
             if (important)
             {
-                message = $"*** {message} ***";
+                logMessage = $"*** {logMessage} ***";
             }
 
-            Console.WriteLine($"  {message}");
+            Console.ForegroundColor = foregroundColor;
+            Console.WriteLine($"  {logMessage}");
+            Console.ResetColor();
         }
 
         protected void LineFeed()
