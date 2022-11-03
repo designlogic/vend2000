@@ -15,21 +15,21 @@ namespace Vend2000
         
         public void Run()
         {
+            ClearScreen();
+            Log(logo);
+
+            var moduleMalfunction = !IsSystemTestSuccessful();
+            if (moduleMalfunction)
+            {
+                LineFeed();
+                Separator();
+                LogError("*** Module malfunction detected ***");
+                Separator();
+                return;
+            }
+
             while (true)
             {
-                ClearScreen();
-                Log(logo);
-
-                var moduleMalfunction = !IsSystemTestSuccessful();
-                if (moduleMalfunction)
-                {
-                    LineFeed();
-                    Separator();
-                    LogError("*** Module malfunction detected ***");
-                    Separator();
-                    break;
-                }
-
                 ClearScreen();
                 Log(logo);
 
